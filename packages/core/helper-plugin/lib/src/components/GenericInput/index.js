@@ -91,6 +91,23 @@ const GenericInput = ({
 
   switch (type) {
     case 'bool': {
+      // in case the default value is null, the default attribute.default doesn't exist
+      const isNullable = rest.attribute?.default === undefined;
+      const clearProps = {
+        clearLabel:
+          isNullable &&
+          formatMessage({
+            id: 'app.components.ToggleCheckbox.clear-label',
+            defaultMessage: 'Clear',
+          }),
+
+        onClear:
+          isNullable &&
+          (() => {
+            onChange({ target: { name, value: null } });
+          }),
+      };
+
       return (
         <ToggleInput
           checked={value === null ? null : value || false}
@@ -101,16 +118,17 @@ const GenericInput = ({
           name={name}
           offLabel={formatMessage({
             id: 'app.components.ToggleCheckbox.off-label',
-            defaultMessage: 'Off',
+            defaultMessage: 'False',
           })}
           onLabel={formatMessage({
             id: 'app.components.ToggleCheckbox.on-label',
-            defaultMessage: 'On',
+            defaultMessage: 'True',
           })}
           onChange={e => {
             onChange({ target: { name, value: e.target.checked } });
           }}
           required={required}
+          {...clearProps}
         />
       );
     }
